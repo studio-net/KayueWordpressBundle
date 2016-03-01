@@ -3,3 +3,7 @@ kayue_wordpress_shortcode_gallery:
     defaults: { _controller: KayueWordpressBundle:Shortcode:gallery }
     requirements:
         id: \d+
+
+wordpress_thumbnail :
+    pattern  : /_wp_thumbnail/{post}/{size}
+    defaults : { size : "100x100", _controller : KayueWordpressBundle:Thumbnail:index }
