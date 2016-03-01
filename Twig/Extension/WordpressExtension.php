@@ -6,9 +6,7 @@ use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
 use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Entity\Term;
 use Kayue\WordpressBundle\Entity\User;
-use Kayue\WordpressBundle\Wordpress\Helper\AttachmentHelper;
-use Kayue\WordpressBundle\Wordpress\ManagerRegistry;
-use Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
 
@@ -34,21 +32,19 @@ class WordpressExtension extends \Twig_Extension
      */
     protected $attachmentHelper;
 
+    /** @var $routing Routing */
+    protected $routing;
+
     /**
-     * @param ManagerRegistry  $managerRegistry
-     * @param ShortcodeChain   $shortcodeChain
-     * @param AttachmentHelper $attachmentHelper
+     * @param Symfony\Component\DependencyInjection\ContainerInterface $container
      */
-    public function __construct(
-        ManagerRegistry $managerRegistry,
-        ShortcodeChain $shortcodeChain,
-        AttachmentHelper $attachmentHelper
-    )
+    public function __construct(ContainerInterface $container)
     {
-        $this->managerRegistry = $managerRegistry;
-        $this->manager = $managerRegistry->getManager();
-        $this->shortcodeChain = $shortcodeChain;
-        $this->attachmentHelper = $attachmentHelper;
+        $this->managerRegistry  = $container->get("kayue_wordpress");
+        $this->shortcodeChain   = $container->get("kayue_wordpress.shortcode_chain");
+        $this->attachmentHelper = $container->get("kayue_wordpress.helper.attachment");
+        $this->routing = $container->get("router");
+        $this->manager = $this->managerRegistry->getManager();
     }
 
     public function getName()
@@ -80,6 +76,7 @@ class WordpressExtension extends \Twig_Extension
             new Twig_SimpleFunction('wp_find_thumbnail', [$this, 'findThumbnail']),
             new Twig_SimpleFunction('wp_find_featured_image', [$this, 'findThumbnail']),
             new Twig_SimpleFunction('wp_get_attachment_url', [$this, 'getAttachmentUrl']),
+			new Twig_SimpleFunction('wp_get_featured_image', [$this, 'getFeaturedImage']),
             new Twig_SimpleFunction('wp_get_post_format', [$this, 'getPostFormatByPost']),
 
             // Terms related functions
@@ -91,6 +88,10 @@ class WordpressExtension extends \Twig_Extension
             new Twig_SimpleFunction('wp_find_user_meta_by', [$this, 'findOneUserMetaBy']),
             new Twig_SimpleFunction('wp_find_user_metas_by', [$this, 'findUserMetasBy']),
         );
+    }
+
+    public function getFeaturedImage(Post $post, $size = "100x100") {
+        return $this->routing->generate("wordpress_thumbnail", ["post" => $post->id, "size" => $size]);
     }
 
     public function switchBlog($id)
