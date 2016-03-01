@@ -76,8 +76,6 @@ services:
     kayue_wordpress.twig.wordpress:
         class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
         arguments:
-            - @kayue_wordpress
-            - @kayue_wordpress.shortcode_chain
-            - @kayue_wordpress.helper.attachment
+            - @service_container
         tags:
             - { name: twig.extension }
