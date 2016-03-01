@@ -10,10 +10,8 @@ use Intervention\Image\ImageManagerStatic as Image;
 /**
  * This controller will allow us to generate thumbnail on the fly
  *
- * @extend Symfony\Bundle\FrameworkBundle\Controller\Controller
  * @author Cyril Mizzi <cyril.mizzi@gmail.com>
  */
-
 class ThumbnailController extends Controller {
 	/**
 	 * Generate the thumbnail format for the given wordpress post id and given
