@@ -91,7 +91,7 @@ class WordpressExtension extends \Twig_Extension
     }
 
     public function getFeaturedImage(Post $post, $size = "100x100") {
-        return $this->routing->generate("wordpress_thumbnail", ["post" => $post->id, "size" => $size]);
+        return $this->routing->generate("wordpress_thumbnail", ["post" => $post->getId(), "size" => $size]);
     }
 
     public function switchBlog($id)
